@@ -61,6 +61,7 @@ struct fec_entry {
 static struct slot buffer[MAX_BUF];
 static struct fec_entry fec_cache[MAX_FEC];
 static uint8_t nack_count[MAX_BUF];
+static double last_nack_time[MAX_BUF];
 
 static double get_time(void) {
     struct timespec ts;
@@ -126,6 +127,7 @@ int main(void) {
     memset(buffer, 0, sizeof(buffer));
     memset(fec_cache, 0, sizeof(fec_cache));
     memset(nack_count, 0, sizeof(nack_count));
+    memset(last_nack_time, 0, sizeof(last_nack_time));
 
     /* Socket: receive from relay (port 47002) */
     int in_fd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -299,6 +301,11 @@ int main(void) {
                 /* Rule 4: Don't over-NACK */
                 if (nack_count[i % MAX_BUF] >= MAX_NACK_PER_FRAME) continue;
 
+                /* Rule 4b: NACK cooldown (wait at least 1 RTT before next NACK) */
+                if (nack_count[i % MAX_BUF] > 0) {
+                    if (now - last_nack_time[i % MAX_BUF] < nack_guard) continue;
+                }
+
                 /* Rule 5: Budget check */
                 if (down_bytes_sent + 5 > DOWN_BUDGET) break;
 
@@ -310,6 +317,7 @@ int main(void) {
                 sendto(nack_fd, nack_pkt, 5, 0,
                        (struct sockaddr *)&nack_dest, sizeof(nack_dest));
                 nack_count[i % MAX_BUF]++;
+                last_nack_time[i % MAX_BUF] = now;
                 down_bytes_sent += 5;
                 nacks_sent++;
             }
