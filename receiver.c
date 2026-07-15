@@ -139,12 +139,12 @@ int main(void) {
     }
     fcntl(in_fd, F_SETFL, O_NONBLOCK);
 
-    /* Socket: send to harness player (port 47020) */
     int player_fd = socket(AF_INET, SOCK_DGRAM, 0);
     struct sockaddr_in player_addr = {0};
     player_addr.sin_family = AF_INET;
     player_addr.sin_port = htons(47020);
     player_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    fcntl(player_fd, F_SETFL, O_NONBLOCK);
 
     /* Socket: send NACKs to relay (port 47003) */
     int nack_fd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -152,6 +152,7 @@ int main(void) {
     nack_dest.sin_family = AF_INET;
     nack_dest.sin_port = htons(47003);
     nack_dest.sin_addr.s_addr = inet_addr("127.0.0.1");
+    fcntl(nack_fd, F_SETFL, O_NONBLOCK);
 
     /* NACK timing parameters */
     double nack_guard = fmax(20.0, delay_ms * 0.25) / 1000.0;

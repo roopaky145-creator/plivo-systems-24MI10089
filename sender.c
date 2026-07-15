@@ -118,12 +118,12 @@ int main(void) {
     }
     fcntl(fb_fd, F_SETFL, O_NONBLOCK);
 
-    /* Socket: send to relay uplink (port 47001) */
     int out_fd = socket(AF_INET, SOCK_DGRAM, 0);
     struct sockaddr_in relay = {0};
     relay.sin_family = AF_INET;
     relay.sin_port = htons(47001);
     relay.sin_addr.s_addr = inet_addr("127.0.0.1");
+    fcntl(out_fd, F_SETFL, O_NONBLOCK);
 
     memset(fec_parity, 0, PAYLOAD_LEN);
     memset(retx_buf, 0, sizeof(retx_buf));
