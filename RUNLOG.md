@@ -37,11 +37,11 @@ relay done: {'up_bytes': 375960, 'down_bytes': 180, 'up_pkts': 2274, 'down_pkts'
 ### Profile B Run (200ms Grading Delay, seed 2 - Worst Case)
 ```
 endpoints done
-relay done: {'up_bytes': 374640, 'down_bytes': 120, 'up_pkts': 2266, 'down_pkts': 24, 'dropped': 122, 'duplicated': 29}
+relay done: {'up_bytes': 375795, 'down_bytes': 125, 'up_pkts': 2273, 'down_pkts': 25, 'dropped': 123, 'duplicated': 29}
 ================ SCORE ================
   frames               : 1500
-  deadline misses      : 4  (0.27%)   [cap 1.00%]
+  deadline misses      : 2  (0.13%)   [cap 1.00%]
   playout delay        : 200 ms   <-- your score if valid; lower wins
-  bandwidth overhead   : 1.56x   [cap 2.00x]   (up 374640B, feedback 120B)
+  bandwidth overhead   : 1.57x   [cap 2.00x]   (up 375795B, feedback 125B)
   RESULT               : VALID
 ```

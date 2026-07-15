@@ -33,7 +33,7 @@
 #define PAYLOAD_LEN     160
 #define FEC_N           2
 #define RETX_BUF_SIZE   512
-#define MAX_RETX        2
+#define MAX_RETX        5
 
 #define PKT_DATA        0x01
 #define PKT_FEC         0x02

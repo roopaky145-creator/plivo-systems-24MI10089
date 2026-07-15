@@ -34,8 +34,8 @@
 #define FEC_N               2
 #define MAX_BUF             2048
 #define MAX_FEC             1024
-#define MAX_NACK_PER_FRAME  3
-#define MAX_NACKS_PER_SCAN  5
+#define MAX_NACK_PER_FRAME  5
+#define MAX_NACKS_PER_SCAN  20
 
 #define PKT_DATA            0x01
 #define PKT_FEC             0x02
@@ -156,9 +156,9 @@ int main(void) {
     nack_dest.sin_addr.s_addr = inet_addr("127.0.0.1");
     fcntl(nack_fd, F_SETFL, O_NONBLOCK);
 
-    /* NACK timing parameters */
-    double nack_guard = fmax(20.0, delay_ms * 0.25) / 1000.0;
-    double nack_grace = (delay_ms * 0.5) / 1000.0;
+    /* Tunable timing constants based on delay */
+    double nack_grace = (delay_ms * 0.4) / 1000.0; /* Wait 40% of delay before first NACK */
+    double nack_guard = 0.030; /* Spam NACKs every 30ms if packet remains missing! */
     int lookahead = (int)(delay_ms / 20);
     if (lookahead < 10) lookahead = 10;
     if (lookahead > MAX_BUF) lookahead = MAX_BUF;
