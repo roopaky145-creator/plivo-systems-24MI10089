@@ -168,34 +168,11 @@ int main(void) {
     while (next_playout_seq < n_frames) {
         double now = get_time();
 
-        /* ===== PLAYOUT: send any due frames ===== */
-        while (next_playout_seq < n_frames) {
-            double deadline = t0 + delay_s + next_playout_seq * 0.020;
-            /* Send 2ms before deadline to give UDP loopback + player time */
-            if (now < deadline - 0.002) break;
-
-            struct slot *s = &buffer[next_playout_seq % MAX_BUF];
-            if (s->seq_tag == (uint32_t)next_playout_seq && s->received) {
-                uint8_t out[4 + PAYLOAD_LEN];
-                uint32_t net_seq = htonl((uint32_t)next_playout_seq);
-                memcpy(out, &net_seq, 4);
-                memcpy(out + 4, s->payload, PAYLOAD_LEN);
-                sendto(player_fd, out, sizeof(out), 0,
-                       (struct sockaddr *)&player_addr, sizeof(player_addr));
-            }
-            /* Clear slot regardless */
-            s->received = 0;
-            nack_count[next_playout_seq % MAX_BUF] = 0;
-            next_playout_seq++;
-        }
-
-        if (next_playout_seq >= n_frames) break;
-
         /* ===== RECEIVE: non-blocking packet read ===== */
         /* Calculate how long we can afford to block in select.
          * We must wake up before the next playout deadline. */
         double next_deadline = t0 + delay_s + next_playout_seq * 0.020 - 0.002;
-        double wait_s = next_deadline - get_time();
+        double wait_s = next_deadline - now;
         if (wait_s < 0.0) wait_s = 0.0;
         if (wait_s > 0.005) wait_s = 0.005; /* max 5ms */
 
@@ -269,6 +246,30 @@ int main(void) {
                 }
             }
         }
+
+        /* ===== PLAYOUT: send any due frames ===== */
+        now = get_time();
+        while (next_playout_seq < n_frames) {
+            double deadline = t0 + delay_s + next_playout_seq * 0.020;
+            /* Send 2ms before deadline to give UDP loopback + player time */
+            if (now < deadline - 0.002) break;
+
+            struct slot *s = &buffer[next_playout_seq % MAX_BUF];
+            if (s->seq_tag == (uint32_t)next_playout_seq && s->received) {
+                uint8_t out[4 + PAYLOAD_LEN];
+                uint32_t net_seq = htonl((uint32_t)next_playout_seq);
+                memcpy(out, &net_seq, 4);
+                memcpy(out + 4, s->payload, PAYLOAD_LEN);
+                sendto(player_fd, out, sizeof(out), 0,
+                       (struct sockaddr *)&player_addr, sizeof(player_addr));
+            }
+            /* Clear slot regardless */
+            s->received = 0;
+            nack_count[next_playout_seq % MAX_BUF] = 0;
+            next_playout_seq++;
+        }
+
+        if (next_playout_seq >= n_frames) break;
 
         /* ===== NACK generation — every 10ms ===== */
         now = get_time();

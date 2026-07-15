@@ -10,6 +10,18 @@ relay done: {'up_bytes': 376125, 'down_bytes': 125, 'up_pkts': 2275, 'down_pkts'
   RESULT               : VALID
 ```
 
+### Profile A Run (80ms, seed 2 - Worst Case)
+```
+endpoints done
+relay done: {'up_bytes': 373650, 'down_bytes': 55, 'up_pkts': 2260, 'down_pkts': 11, 'dropped': 44, 'duplicated': 15}
+================ SCORE ================
+  frames               : 1500
+  deadline misses      : 0  (0.00%)   [cap 1.00%]
+  playout delay        : 80 ms   <-- your score if valid; lower wins
+  bandwidth overhead   : 1.56x   [cap 2.00x]   (up 373650B, feedback 55B)
+  RESULT               : VALID
+```
+
 ### Profile B Run (200ms, seed 1)
 ```
 endpoints done
@@ -19,5 +31,17 @@ relay done: {'up_bytes': 375960, 'down_bytes': 180, 'up_pkts': 2274, 'down_pkts'
   deadline misses      : 5  (0.33%)   [cap 1.00%]
   playout delay        : 200 ms   <-- your score if valid; lower wins
   bandwidth overhead   : 1.57x   [cap 2.00x]   (up 375960B, feedback 180B)
+  RESULT               : VALID
+```
+
+### Profile B Run (200ms, seed 2 - Worst Case)
+```
+endpoints done
+relay done: {'up_bytes': 374640, 'down_bytes': 120, 'up_pkts': 2266, 'down_pkts': 24, 'dropped': 122, 'duplicated': 29}
+================ SCORE ================
+  frames               : 1500
+  deadline misses      : 2  (0.13%)   [cap 1.00%]
+  playout delay        : 200 ms   <-- your score if valid; lower wins
+  bandwidth overhead   : 1.56x   [cap 2.00x]   (up 374640B, feedback 120B)
   RESULT               : VALID
 ```
