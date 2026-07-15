@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Assignment Summary: Flaky Network</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; max-width: 800px; margin: 40px auto; padding: 20px; }
+        h1 { color: #333; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f4f4f4; }
+        .success { color: green; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Assignment Summary</h1>
+    <p><strong>Name:</strong> Roopak Yadav</p>
+    <p><strong>Roll No:</strong> 24MI10089</p>
+    <p><strong>Email:</strong> roopaky145@gmail.com</p>
+
+    <h2>Results Overview</h2>
+    <p>The UDP Sender/Receiver system successfully mitigates jitter, packet loss, and delays using a hybrid FEC + NACK approach over non-blocking single-threaded event loops.</p>
+    
+    <table>
+        <tr>
+            <th>Profile</th>
+            <th>Delay Target</th>
+            <th>Miss Rate</th>
+            <th>Overhead</th>
+            <th>Result</th>
+        </tr>
+        <tr>
+            <td>A (Mild)</td>
+            <td>80 ms</td>
+            <td>0.07%</td>
+            <td>1.57x</td>
+            <td class="success">VALID</td>
+        </tr>
+        <tr>
+            <td>B (Severe)</td>
+            <td>200 ms</td>
+            <td>0.33%</td>
+            <td>1.57x</td>
+            <td class="success">VALID</td>
+        </tr>
+    </table>
+    
+    <h2>Key Design Features</h2>
+    <ul>
+        <li><strong>Hybrid Recovery:</strong> Baseline FEC (N=2) for instantaneous loss recovery, backed by NACKs for burst drops.</li>
+        <li><strong>Smart Timers:</strong> Dynamic NACK grace and guard periods calculated from target playout delay.</li>
+        <li><strong>Zero Stalls:</strong> Non-blocking single-threaded <code>select()</code> loop ensures zero context-switch timing jitter on playout.</li>
+    </ul>
+</body>
+</html>
